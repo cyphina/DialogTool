@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UPDialogTool"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000" MouseWheel="winMain_MouseWheel">
+        Title="MainWindow" Height="700
+		" Width="1000" MouseWheel="winMain_MouseWheel">
 	<Grid x:Name="grdMain">
 		<Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
 			<Grid x:Name="canvTitleBar">
@@ -15,7 +16,7 @@
 		</Grid>
 		<Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="1">
 			<Border x:Name ="UPBorder" BorderThickness="5,5,5,10" Margin="0" Grid.Row="0" BorderBrush="#FF133566" Grid.RowSpan="2" Grid.ColumnSpan="2">
-				<Canvas x:Name="canvMain" MouseLeftButtonDown="canvMain_MouseLeftButtonDown" MouseRightButtonDown="canvMain_MouseRightButtonDown" MouseMove="canvMain_MouseMove" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="canvMain_MouseLeftButtonUp" MouseRightButtonUp="canvMain_MouseRightButtonUp" Width="10000" Height="10000" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="True">
+				<Canvas x:Name="canvMain" MouseLeftButtonDown="canvMain_MouseLeftButtonDown" MouseRightButtonDown="canvMain_MouseRightButtonDown" MouseMove="canvMain_MouseMove" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="canvMain_MouseLeftButtonUp" MouseRightButtonUp="canvMain_MouseRightButtonUp" Width="10000" Height="10000" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="True" KeyDown="canvMain_KeyDown">
 					<Canvas.Background>
 						<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 							<GradientStop Color="Black" Offset="0"/>

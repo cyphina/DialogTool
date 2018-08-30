@@ -48,9 +48,28 @@ namespace UPDialogTool
 			}
 		}
 
+		public void Clear()
+		{
+			if (fromNodeRef != null)
+			{
+				fromNodeRef.fromLines.Remove(this);
+			}
+
+			if (toNodeRef != null)
+			{
+				toNodeRef.toLines.Remove(this);
+			}
+
+			(Parent as Canvas).Children.Remove(this);
+			(Application.Current.MainWindow as MainWindow).edgeList.Remove(this);
+		}
+
 		private void lnNodeConnector_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			IsSelected = true;
+			if (Keyboard.IsKeyDown(Key.X))
+			{
+				Clear();
+			}
 		}
 
 		public UPNodeConnector()

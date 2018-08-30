@@ -29,12 +29,10 @@
 					</LinearGradientBrush>
 				</Border.BorderBrush>
 			</Border>
-			<Label x:Name="lblNodeName" Content="Name:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0" Foreground="#FF294D8D" Height="26" Width="44" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtName" Text ="{Binding DialogName, Mode = OneWayToSource, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Left" Height="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF919136" Margin="11,21,0,0"/>
-			<Label x:Name="lblNodeDialog" Content="Dialog:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,69,0,0" Foreground="#FF294D8D" Height="26" Width="47" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtDialog" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FF20AA97" Margin="10,90,0,10" RenderTransformOrigin="0.528,-0.36" Text="{Binding Dialog}"/>
-			<Label x:Name="lblActor" Content="Actor:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,33,0,0" Foreground="#FF294D8D" Height="26" Width="41" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtActor" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF573691" Margin="10,54,0,0" Text="{Binding DialogActor}"/>
+			<Label x:Name="lblNodeDialog" Content="Dialog:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,45,0,0" Foreground="#FF294D8D" Height="26" Width="47" IsHitTestVisible="False"/>
+			<TextBox x:Name="txtDialog" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FF20AA97" Margin="10,66,0,10" RenderTransformOrigin="0.528,-0.36" Text="{Binding Dialog}"/>
+			<Label x:Name="lblActor" Content="Actor:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,6,0,0" Foreground="#FF294D8D" Height="26" Width="41" IsHitTestVisible="False"/>
+			<TextBox x:Name="txtActor" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF573691" Margin="10,26,0,0" Text="{Binding DialogActor}"/>
 			<Button x:Name="btnNodeDrag" Content="" Width="36" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-18,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" Background="{x:Null}" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown">
 				<Button.Style>
 					<Style TargetType="Button">

@@ -73,14 +73,18 @@ namespace UPDialogTool
 		private MainWindow mainWindowRef = null;
 
 		public uint nodeID; //Unique id for each node  
-		public List<UPNodeConnector> fromLines = new List<UPNodeConnector>(); //Lines leading to the next dialog
-		public List<UPNodeConnector> toLines = new List<UPNodeConnector>(); //Dialog lines which lead to this node										 
+		public LinkedList<UPNodeConnector> fromLines = new LinkedList<UPNodeConnector>(); //Lines leading to the next dialog
+		public LinkedList<UPNodeConnector> toLines = new LinkedList<UPNodeConnector>(); //Dialog lines which lead to this node										 
 
 		private static Brush selectedColor = new LinearGradientBrush(Color.FromRgb(66, 244, 217),
 			Color.FromRgb(50, 244, 191), new Point(0, 0), new Point(1, 1));
 		private static Brush unSelectedColor = new LinearGradientBrush(Color.FromRgb(0, 0, 0), Color.FromRgb(128, 61, 135),
 			new Point(0.5, 0), new Point(0.5, 1));
 
+		private static BitmapImage hoveredImage = new BitmapImage(
+			new Uri("pack://application:,,,/UPDialogTool;component/Images/hijirichristmastransB.jpg"));	
+		private static BitmapImage idleImage = 	new BitmapImage(
+			new Uri("pack://application:,,,/UPDialogTool;component/Images/hijirichristmastrans.jpg"));
 
 		public bool IsSelected
 		{
@@ -160,20 +164,15 @@ namespace UPDialogTool
 		private void OnMouseEnterNode(object sender, MouseEventArgs e)
 		{
 			ImageBrush image = new ImageBrush();
-			image.ImageSource =
-				new BitmapImage(
-					new Uri("pack://application:,,,/UPDialogTool;component/Images/hijirichristmastransB.jpg"));
+			image.ImageSource = hoveredImage;
 			image.Stretch = Stretch.UniformToFill;
 			bdrNode.Background = image;
-
 		}
 
 		private void OnMouseLeaveNode(object sender, MouseEventArgs e)
 		{
 			ImageBrush image = new ImageBrush();
-			image.ImageSource =
-				new BitmapImage(
-					new Uri("pack://application:,,,/UPDialogTool;component/Images/hijirichristmastrans.jpg"));
+			image.ImageSource = idleImage;
 			image.Stretch = Stretch.UniformToFill;
 			bdrNode.Background = image;
 			Mouse.Capture(mainWindowRef.grdMain, CaptureMode.SubTree);
@@ -217,7 +216,7 @@ namespace UPDialogTool
 				if (!mainWindowRef.draggedUponNode.Equals(this))
 				{
 					UPNodeConnector line = new UPNodeConnector();
-					line.IsHitTestVisible = false;
+					//line.IsHitTestVisible = false;
 
 					Point startPoint = mainWindowRef.draggedUponNode.GetBtnLoc();
 					line.lnNodeConnector.X1 = startPoint.X;
@@ -237,8 +236,8 @@ namespace UPDialogTool
 
 					mainWindowRef.canvMain.Children.Add(line);
 
-					mainWindowRef.draggedUponNode.fromLines.Add(line);
-					toLines.Add(line);
+					mainWindowRef.draggedUponNode.fromLines.AddLast(line);
+					toLines.AddLast(line);
 
 					mainWindowRef.edgeList.AddLast(line);
 
@@ -281,53 +280,6 @@ namespace UPDialogTool
 			mainWindowRef.connector.Visibility = Visibility.Visible;
 			e.Handled = true;
 		}
-
-		//private void gridNode_MouseMove(object sender, MouseEventArgs e)
-		//{
-
-		//		if (e.LeftButton == MouseButtonState.Pressed)
-		//		{
-		//			if (!IsSelected)
-		//			{
-		//				foreach (UPNode node in mainWindowRef.nodeList)
-		//				{
-		//					node.IsSelected = false;
-		//				}
-
-		//				IsSelected = true;
-		//			}
-
-		//			Vector delta = e.GetPosition(mainWindowRef.canvMain) - clickPoint;
-		//			foreach (UPNode node in mainWindowRef.nodeList)
-		//			{
-		//				if (node.IsSelected)
-		//				{
-		//					TransformGroup transforms = new TransformGroup();
-		//					transforms.Children.Add(node.RenderTransform);
-		//					transforms.Children.Add(new TranslateTransform(delta.X, delta.Y));
-		//					node.RenderTransform = transforms;
-
-		//					foreach (Line line in node.fromLines)
-		//					{
-		//						line.X1 += delta.X;
-		//						line.Y1 += delta.Y;
-		//					}
-
-		//					foreach (Line line in node.toLines)
-		//					{
-		//						transforms = new TransformGroup();
-		//						line.X2 += delta.X;
-		//						line.Y2 += delta.Y;
-		//					}
-		//				}
-
-		//			}
-		//		}
-		//		Console.WriteLine(DateTime.Now.TimeOfDay);
-		//		clickPoint = e.GetPosition(mainWindowRef.canvMain);
-		//		e.Handled = true;
-		//	}
-		//}
 	}
 }
 
