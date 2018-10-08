@@ -32,6 +32,7 @@
 							<TranslateTransform x:Name="translation"/>
 						</TransformGroup>
 					</Canvas.RenderTransform>
+					<local:RootNode x:Name="root" RenderTransformOrigin="0.5,0.5" Canvas.Left="0" Canvas.Top="0"/>
 					<Rectangle x:Name="rectSelection" Height="100" Canvas.Left="0" Canvas.Top="0" Width="100" Opacity="0.5" RenderTransformOrigin="0,0" Fill="#99933737" Visibility="Collapsed" Margin="-100,0,0,0"/>
 				</Canvas>
 			</Border>

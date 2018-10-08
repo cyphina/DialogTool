@@ -4,13 +4,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows;
-
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.Win32;
 using Newtonsoft.Json;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using Path = System.Windows.Shapes.Path;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace UPDialogTool
 {
@@ -24,7 +28,7 @@ namespace UPDialogTool
 			set
 			{
 				title = value;
-				RaisePropertyChangedEvent("DialogName");
+				RaisePropertyChangedEvent("Title");
 			}
 		}
 	}
@@ -54,11 +58,11 @@ namespace UPDialogTool
 
 		public Path connector = new Path(); //Line that appears when dragging off a node to show a possible connection that could be formed
 		public LineGeometry connectorLine = new LineGeometry(); //Describes the line for the path above
-		public Dictionary<uint, UPNode> nodeList = new Dictionary<uint, UPNode>(); //list of nodes
-		public HashSet<UPNode> selectedNodes = new HashSet<UPNode>(new NodeEqualityComparer()); //list of selected nodes
+		public HashSet<UPNodeBase> nodeList = new HashSet<UPNodeBase>(); //list of nodes
+		public HashSet<UPNodeBase> selectedNodes = new HashSet<UPNodeBase>(new NodeEqualityComparer()); //list of selected nodes
 		public LinkedList<UPNodeConnector> edgeList = new LinkedList<UPNodeConnector>(); //list of lines 
 
-		public UPNode draggedUponNode; //records what node we are currently dragging a connector off of, aka which node we're trying create a link off of
+		public UPNodeBase draggedUponNode; //records what node we are currently dragging a connector off of, aka which node we're trying create a link off of
 
 		//Some reusable so they don't have to be recreted with new everytime we need them
 		private Thickness selectionRectThickness = new Thickness();
@@ -66,7 +70,9 @@ namespace UPDialogTool
 		private Vector mouseDelta = new Vector();
 
 		//Number of nodes ever created in the program.  Used to give each node a unique id.
-		private uint nodeNum = 0;
+		private int nodeNum = 0;
+
+		private SaveLoadManager saveLoadManager = new SaveLoadManager();
 
 		public MainWindow()
 		{
@@ -76,6 +82,10 @@ namespace UPDialogTool
 			connector.StrokeThickness = 5;
 			connector.Data = connectorLine;
 			canvMain.Children.Add(connector);
+
+			nodeList.Add(root);
+			root.Translate.X = 5000;
+			root.Translate.Y = 5020;
 		}
 
 		/// <summary>
@@ -115,6 +125,35 @@ namespace UPDialogTool
 			}
 		}
 
+		void CreateNode(NodeType nodeType, Point spawnPos)
+		{
+			UPNodeBase newNode = null;
+			switch (nodeType)
+			{
+				case NodeType.Condition:
+					newNode = new UPNodeCondition();
+					break;
+				case NodeType.Dialog:
+					newNode = new UPNode();
+					break;
+				case NodeType.Trigger:
+					newNode = new UPNodeTrigger();
+					break;
+				default: break;
+			}
+
+			newNode.Translate.X = GridSnap(spawnPos.X, 20);
+			newNode.Translate.Y = GridSnap(spawnPos.Y, 20);
+			newNode.nodeID = ++nodeNum;
+
+			//AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(node.gridNode);
+			//DragAdorner dragAdorner = new DragAdorner(node.gridNode);
+			//aLayer.Add(dragAdorner);
+
+			canvMain.Children.Add(newNode);
+			nodeList.Add(newNode);
+		}
+
 		private void canvMain_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			savedMousePosition = e.GetPosition(canvMain);
@@ -124,25 +163,22 @@ namespace UPDialogTool
 
 			canvMain.Focus();
 
-			foreach (UPNode node in nodeList.Values)
+			foreach (UPNodeBase node in nodeList)
 			{
 				node.IsSelected = false;
 			}
 
 			if (Keyboard.IsKeyDown(Key.F))
 			{
-				UPNode node = new UPNode();
-				TransformGroup transforms = new TransformGroup();
-				Point mousePos = e.GetPosition(canvMain);
-				node.translation.X = GridSnap(mousePos.X,20);
-				node.translation.Y = GridSnap(mousePos.Y,20);
-				node.RenderTransform = transforms;
-				node.nodeID = ++nodeNum;
-				//AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(node.gridNode);
-				//DragAdorner dragAdorner = new DragAdorner(node.gridNode);
-				//aLayer.Add(dragAdorner);
-				canvMain.Children.Add(node);
-				nodeList.Add(node.nodeID, node);
+				CreateNode(NodeType.Dialog, e.GetPosition(canvMain));
+			}
+			else if (Keyboard.IsKeyDown(Key.C))
+			{
+				CreateNode(NodeType.Condition, e.GetPosition(canvMain));
+			}
+			else if (Keyboard.IsKeyDown(Key.T))
+			{
+				CreateNode(NodeType.Trigger, e.GetPosition(canvMain));
 			}
 		}
 
@@ -220,10 +256,10 @@ namespace UPDialogTool
 			rectSelection.Height = mouseDelta.Y;
 			rectSelection.Margin = selectionRectThickness;
 
-			foreach (UPNode node in nodeList.Values)
+			foreach (UPNodeBase node in nodeList)
 			{
-				if (selectionRectBounds.IntersectsWith(new Rect(node.RenderTransform.Value.OffsetX + node.translation.X,
-					node.RenderTransform.Value.OffsetY + node.translation.Y, node.ActualWidth, node.ActualHeight)))
+				if (selectionRectBounds.IntersectsWith(new Rect(node.RenderTransform.Value.OffsetX + node.Translate.X,
+					node.RenderTransform.Value.OffsetY + node.Translate.Y, node.ActualWidth, node.ActualHeight)))
 				{
 					node.IsSelected = true;
 				}
@@ -234,24 +270,25 @@ namespace UPDialogTool
 			}
 		}
 
+		/**Function called when node is being moved*/
 		private void NodeMove(MouseEventArgs e)
 		{
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{
 				Vector delta = e.GetPosition(canvMain) - savedMousePosition;
 
-				foreach (UPNode node in selectedNodes)
+				foreach (UPNodeBase node in selectedNodes)
 				{
-					node.translation.X = GridSnap(node.clickTransform.X + delta.X,20);
-					node.translation.Y = GridSnap(node.clickTransform.Y + delta.Y,20);
+					node.Translate.X = GridSnap(node.clickTransform.X + delta.X, 20);
+					node.Translate.Y = GridSnap(node.clickTransform.Y + delta.Y, 20);
 
-					foreach(UPNodeConnector edge in node.fromLines)
+					foreach (UPNodeConnector edge in node.fromLines)
 					{
 						edge.lnNodeConnector.X1 = GridSnap(edge.savedStartPosition.X + delta.X, 20);
 						edge.lnNodeConnector.Y1 = GridSnap(edge.savedStartPosition.Y + delta.Y, 20);
 					}
 
-					foreach(UPNodeConnector edge in node.toLines)
+					foreach (UPNodeConnector edge in node.toLines)
 					{
 						edge.lnNodeConnector.X2 = GridSnap(edge.savedEndPosition.X + delta.X, 20);
 						edge.lnNodeConnector.Y2 = GridSnap(edge.savedEndPosition.Y + delta.Y, 20);
@@ -316,144 +353,76 @@ namespace UPDialogTool
 			selectedNodes.Clear();
 			edgeList.Clear();
 			canvMain.Children.Add(connector);
+			canvMain.Children.Add(rectSelection);
 		}
 
 		private void BtnClear_Click(object sender, RoutedEventArgs e)
 		{
 			Clear();
+			nodeList.Add(root);
+			canvMain.Children.Add(root);
 		}
 
-		private void NumberNodes()
+		/**BFS search to get the nodes connected to the root in a nice order for exporting*/
+		private LinkedList<UPNodeBase> GetExportNodes()
 		{
-			UPNode currentNode = null;
-			BitArray visitedNodes = new BitArray(nodeList.Count);
+			UPNodeBase currentNode = root;
+			LinkedList<UPNodeBase> exportingNodes = new LinkedList<UPNodeBase>();
+			Queue<UPNodeBase> nodeQueue = new Queue<UPNodeBase>();
+			HashSet<int> visitedNodeIDs = new HashSet<int>();
 
-			//Find the root
-			foreach (UPNode node in nodeList.Values)
+			nodeQueue.Enqueue(currentNode);
+
+			while (nodeQueue.Count > 0)
 			{
-				if (node.toLines.Count == 0)
+				currentNode = nodeQueue.Dequeue();
+				exportingNodes.AddLast(currentNode);
+
+				foreach (UPNodeConnector conn in currentNode.fromLines)
 				{
-					currentNode = node;
+					//Ensure if our graph has two links connecting to one node, it doesn't get visited twice
+					if (!visitedNodeIDs.Contains(conn.toNodeRef.nodeID))
+					{
+						nodeQueue.Enqueue(conn.toNodeRef);
+						visitedNodeIDs.Add(conn.toNodeRef.nodeID);
+					}
 				}
 			}
-
-			//Queue<UPNode> nodeQueue = new Queue<UPNode>();
-			//UPNode nextNode = baseNode.fromLines.First.Value.toNodeRef;
-			
-			//if(currentNode != null)
-			//	nodeQueue.Enqueue(currentNode);
-
-			//while (nodeQueue.Count > 0)
-			//{
-			//	currentNode = nodeQueue.Dequeue();
-			//	if()
-			//}
-		}
-		private void SaveNodeData(UPNode node, JsonTextWriter writer)
-		{
-			//Save node id
-			writer.WriteValue(node.nodeID);
-
-			//Save Dialog
-			writer.WriteValue(node.txtDialog.Text);
-
-			//Save Speaker Name
-			writer.WriteValue(node.txtActor.Text);
-
-			//Save Node Position
-			writer.WriteValue(node.translation.X);
-			writer.WriteValue(node.translation.Y);
-		}
-
-		private void SaveEdgeData(UPNodeConnector edge, JsonTextWriter writer)
-		{
-			writer.WriteValue(edge.toNodeRef.nodeID);
-			writer.WriteValue(edge.fromNodeRef.nodeID);
+			exportingNodes.RemoveFirst();
+			return exportingNodes;
 		}
 
 		//TODO: Maybe save in a more compact format
 		/**Function to save the graph data so it can be reloaded with this program.  Saves more dasta than export*/
 		private void BtnSave_Click(object sender, RoutedEventArgs e)
 		{
-			
 			SaveFileDialog saveDialog = new SaveFileDialog();
 			if (saveDialog.ShowDialog() == true)
 			{
 				JsonSerializer s = new JsonSerializer();
 				using (StreamWriter sw = new StreamWriter(saveDialog.FileName))
 				{
-					using (JsonTextWriter writer = new JsonTextWriter(sw))
+					using (JsonWriter writer = new JsonTextWriter(sw))
 					{
+						writer.Formatting = Formatting.Indented;
+
 						writer.WriteStartObject();
-						writer.WritePropertyName("Nodes");
-						writer.WriteStartArray();
-						foreach (UPNode node in nodeList.Values)
-						{
-							SaveNodeData(node, writer);
-						}
-
-						writer.WriteEndArray();
-						writer.WritePropertyName("Edges");
-						writer.WriteStartArray();
-						foreach (UPNodeConnector edge in edgeList)
-						{
-							SaveEdgeData(edge, writer);
-						}
-
-						writer.WriteEndArray();
-
+						saveLoadManager.SaveNodes(nodeList, writer);
+						saveLoadManager.SaveEdges(edgeList, writer);
 
 						//Save zoom state
-						writer.WritePropertyName("Zoom");
-						writer.WriteValue(zoomValue);
+						saveLoadManager.WriteProperty(writer, "Zoom", zoomValue);
 
 						//Save number of nodes created
-						writer.WritePropertyName("NodeNum");
-						writer.WriteValue(nodeNum);
+						saveLoadManager.WriteProperty(writer, "NodeNum", nodeNum);
 
 						//Save Title
-						writer.WritePropertyName("Title");
-						writer.WriteValue(lblTitle.Content.ToString());
+						saveLoadManager.WriteProperty(writer, "Title", txtTitle.Text);
+
 						writer.WriteEndObject();
 						MessageBox.Show("Save Successful");
 					}
 				}
-			}
-		}
-
-		private void LoadNodeData(JsonTextReader reader)
-		{
-			while (reader.Read() && reader.TokenType != JsonToken.EndArray)
-			{
-				UPNode node = new UPNode();
-				node.nodeID = (uint)(long)reader.Value;
-				reader.Read();
-				node.txtDialog.Text = (string)reader.Value;
-				reader.Read();
-				node.txtActor.Text = (string)reader.Value;
-				reader.Read();
-				node.translation.X = (double)reader.Value;
-				reader.Read();
-				node.translation.Y = (double)reader.Value;
-				nodeList[node.nodeID] = node;
-				canvMain.Children.Add(node);
-			}
-		}
-
-		private void LoadEdges(JsonTextReader reader)
-		{
-			while (reader.Read() && reader.TokenType != JsonToken.EndArray)
-			{
-				UPNodeConnector edge = new UPNodeConnector();
-				uint fromNodeID = (uint)(long)reader.Value;
-				edge.fromNodeRef = nodeList[fromNodeID];
-				edge.fromNodeRef.fromLines.AddLast(edge);
-				reader.Read();
-				uint toNodeID = (uint)(long)reader.Value;
-				edge.toNodeRef = nodeList[toNodeID];
-				edge.toNodeRef.toLines.AddLast(edge);
-				edgeList.AddLast(edge);
-				canvMain.Children.Add(edge);							
 			}
 		}
 
@@ -473,30 +442,42 @@ namespace UPDialogTool
 							{
 								if (reader.TokenType == JsonToken.PropertyName)
 								{
-									string propertyName = (string) reader.Value;
+									string propertyName = (string)reader.Value;
 									switch (propertyName)
 									{
 										case "Nodes":
-											reader.Read(); //array start
-											LoadNodeData(reader);
+											reader.Read(); //array start			
+											List<UPNodeBase> loadedNodes = saveLoadManager.LoadNodeData(reader);
+											foreach (UPNodeBase node in loadedNodes)
+											{
+												nodeList.Add(node);
+												canvMain.Children.Add(node);
+											}
+
+											if (loadedNodes.Count > 0)
+												root = loadedNodes[0] as RootNode;
 											break;
 										case "Edges":
 											reader.Read();
-											LoadEdges(reader);
+											edgeList = saveLoadManager.LoadEdges(reader, nodeList);
+											foreach (UPNodeConnector edge in edgeList)
+											{
+												canvMain.Children.Add(edge);
+											}
 											break;
 										case "Zoom":
 											reader.Read();
-											zoomValue = (double) reader.Value;
+											zoomValue = (double)reader.Value;
 											scale.ScaleX = zoomValue;
 											scale.ScaleY = zoomValue;
 											break;
 										case "NodeNum":
 											reader.Read();
-											nodeNum = (uint) (long) reader.Value;
+											nodeNum = (int)(long)reader.Value;
 											break;
 										case "Title":
 											reader.Read();
-											lblTitle.Content = (string) reader.Value;
+											txtTitle.Text = (string)reader.Value;
 											break;
 									}
 								}
@@ -509,7 +490,7 @@ namespace UPDialogTool
 			}
 		}
 
-		/**Functin to export for use in Unbounded Perceptions (can be exported into UE4 datatable*/
+		/**Function to export for use in Unbounded Perceptions (can be exported into UE4 datatable*/
 		private void BtnExport_Click(object sender, RoutedEventArgs e)
 		{
 			string title = lblTitle.Content.ToString();
@@ -519,38 +500,45 @@ namespace UPDialogTool
 				if (saveDialog.ShowDialog() == true)
 				{
 					JsonSerializer s = new JsonSerializer();
-					using (StreamWriter sw = new StreamWriter(saveDialog.FileName))
+					using (StreamWriter sw = new StreamWriter(saveDialog.FileName + ".json"))
 					{
 						using (JsonWriter writer = new JsonTextWriter(sw))
 						{
+							writer.Formatting = Formatting.Indented;
+							int index = 0;
+							int edgeIndex = root.fromLines.Count - 1;
+							HashSet<int> visitedNodeIndices = new HashSet<int>();
+
 							writer.WriteStartArray();
-							foreach (UPNode node in nodeList.Values)
+							foreach (UPNodeBase node in GetExportNodes())
 							{
 								writer.WriteStartObject();
-
-								writer.WritePropertyName("Name");
-								writer.WriteValue(title + node.nodeID);
+								saveLoadManager.WriteProperty(writer, "Name", title + ++index);
 
 								writer.WritePropertyName("nextDialogue");
 								writer.WriteStartArray();
 								foreach (UPNodeConnector nextNodeEdge in node.fromLines)
 								{
-									writer.WriteValue(nextNodeEdge.toNodeRef.nodeID);
-								}
+									//Ensure double connected nodes don't increase the edge count
+									if (!visitedNodeIndices.Contains(nextNodeEdge.toNodeRef.nodeID))
+									{
+										++edgeIndex;
+										visitedNodeIndices.Add(nextNodeEdge.toNodeRef.nodeID);
+									}
 
+									writer.WriteValue(edgeIndex);
+								}
 								writer.WriteEndArray();
 
-								writer.WritePropertyName("text");
 								//Save in UE4 FText format (Namespace, Key, Text)
-								writer.WriteValue(string.Format(@"NSLOCTEXT(""RTSDialog"", ""{0}"", ""{1}"")",
-									title + node.nodeID, node.txtDialog.Text));
+								saveLoadManager.WriteProperty(writer, "text", string.Format(@"NSLOCTEXT(""RTSDialog"", ""{0}"", ""{1}"")",
+									txtTitle.Text + index, node.DialogText));
 
-								writer.WritePropertyName("actor");
-								writer.WriteValue(node.txtActor.Text);
+								saveLoadManager.WriteProperty(writer, "actor", node.Actor);
 
 								writer.WriteEndObject();
-							}
 
+							}
 							writer.WriteEndArray();
 
 							MessageBox.Show("Export Successful");
@@ -574,20 +562,10 @@ namespace UPDialogTool
 			switch (e.Key)
 			{
 				case Key.Delete:
-					foreach (UPNode node in selectedNodes)
+					foreach (UPNodeBase node in selectedNodes)
 					{
-						while(node.toLines.Count > 0)
-						{
-							node.toLines.RemoveLast();
-						}
-
-						foreach (UPNodeConnector edge in node.fromLines)
-						{
-							node.fromLines.RemoveLast();
-						}
-
-						nodeList.Remove(node.nodeID);
-						canvMain.Children.Remove(node);
+						node.Delete();
+						--nodeNum;
 					}
 					break;
 			}

@@ -25,8 +25,8 @@ namespace UPDialogTool
 		public Vector savedStartPosition = new Vector(); //Saved position of line so offset can be applied to it
 		public Vector savedEndPosition = new Vector(); //Saved position of line so offset can be applied to it
 
-		public UPNode fromNodeRef;
-		public UPNode toNodeRef;
+		public UPNodeBase fromNodeRef = null;
+		public UPNodeBase toNodeRef = null;
 
 		private static Brush selectedColor = new LinearGradientBrush(Color.FromRgb(66, 244, 217),
 			Color.FromRgb(50, 244, 191), new Point(0, 0), new Point(1, 1));
