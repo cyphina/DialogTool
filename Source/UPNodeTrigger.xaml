@@ -35,20 +35,92 @@
 			<Label x:Name="lblActor" Content="Trigger Type" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0" Foreground="#FFDC9329" IsHitTestVisible="False" FontSize="18"/>
 			<ComboBox x:Name="cboxTriggerType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF36915B" Margin="10,35,0,0" SelectedIndex="0">
 				<ComboBoxItem Content="None"/>
-				<ComboBoxItem Content="ChangeDialog"/>
-				<ComboBoxItem Content="ModifyStats"/>
-				<ComboBoxItem Content="OpenHUDTrigger"/>
-				<ComboBoxItem Content="OpenStorageHUDTrigger"/>
-				<ComboBoxItem Content="ChangePartyTrigger"/>
-				<ComboBoxItem Content="ActivateOtherTrigger"/>
-				<ComboBoxItem Content="DeactivateOtherTrigger"/>
-				<ComboBoxItem Content="ChangeTriggerType"/>
-				<ComboBoxItem Content="AddQuestTrigger"/>
-				<ComboBoxItem Content="CompleteQuestGoalTrigger"/>
-				<ComboBoxItem Content="DisplayDialogTrigger"/>
-				<ComboBoxItem Content="DisplayConversationTrigger"/>
+				<ComboBoxItem Content="ChangeDialog">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Given an NPC name (object 1), changes dialog of topic (value 1 (is a fully qualified gameplaytag name)) to dialog name (value 2).  If (value2) empty, then changes default dialog to dialogName (value1)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="ModifyStats">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>For each object, assumes object is a unit.  Changes Stat (value N) (ordered numerically by stats, skills, vitals, mechanics) by adding (value N+1) to it</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="OpenHUDTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Takes one TriggerValue denoting the hud to be opened enum value corresponding int value.  Look at HUDManager for HUDs enum and corresponding int values</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="OpenStorageHUDTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Takes one TriggerValue denoting the hud to be opened enum value corresponding int value.  Look at HUDManager for HUDs enum and corresponding int values</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="ChangePartyTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Takes up to four trigger objects denoting the new party members in their new order</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="ActivateOtherTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Activate another trigger (object 1)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="DeactivateOtherTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Deactivate another trigger (object 1)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="ChangeTriggerType">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Changes trigger (object 1) to type (data 1)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="AddQuestTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Add quest from questlistmap with key (value1), and if (value2) is not 0, it will start automatically</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="CompleteQuestGoalTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Complete's a quest goal from currentQuests with gameplay child tag id (value1) and goalIndex (value2).  (value3) denotes pass (!= 0) or fail (== 0)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="DisplayDialogTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Displays the lines in TriggerValues as dialog.  Messages aren't localized, nor do they have a corresponding actor name, so better use DisplayConversationTrigger</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="DisplayConversationTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Gets the conversation from the conversation table named (value1) and display its contents</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
 			</ComboBox>
-			<Button x:Name="btnNodeDrag" Content="" Width="36" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-18,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" Background="{x:Null}" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown">
+			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">
@@ -56,16 +128,16 @@
 								<ControlTemplate TargetType="Button">
 									<Border x:Name="border">
 										<Grid>
-											<Image x:Name ="btnImage" Source="Images/GreenButtonShadow.png" Width="32" Height="32"/>
+											<Image x:Name ="btnImage" Source="Images/Button.png" Width="40" Height="32"/>
 											<ContentPresenter></ContentPresenter>
 										</Grid>
 									</Border>
 									<ControlTemplate.Triggers>
 										<Trigger Property="IsMouseOver" Value="True">
-											<Setter TargetName="btnImage" Property="Source" Value ="Images/GreenButtonShadowHover.png"/>
+											<Setter TargetName="btnImage" Property="Source" Value ="Images/ButtonHover.png"/>
 										</Trigger>
 										<Trigger Property="IsPressed" Value="True">
-											<Setter TargetName="btnImage" Property="Source" Value ="Images/GreenButtonShadowPress.png"/>
+											<Setter TargetName="btnImage" Property="Source" Value ="Images/ButtonClicked.png"/>
 										</Trigger>
 									</ControlTemplate.Triggers>
 								</ControlTemplate>

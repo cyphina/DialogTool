@@ -45,11 +45,42 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" />
-			<Button Content="Export" x:Name="BtnExport" Grid.Column="1" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnExport_Click" />
-			<Button Content="Load" x:Name="BtnLoad" Grid.Column="2" Height="30" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" Click="BtnLoad_Click" />
-			<Button Content="Zoom Reset" x:Name="BtnResetZoom" Grid.Column="3" Height="30" Click="BtnResetZoom_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" />
-			<Button Content="Clear" x:Name="BtnClear" Grid.Column="4" Height="30" Click="BtnClear_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" />
+			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" VerticalAlignment="Bottom" >
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Saves data to be reopenable by the DialogTool at a later time</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>
+			<Button Content="Export" x:Name="BtnExport" Grid.Column="1" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnExport_Click">
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Save the data in a format which can be copied into one of Unbounded Perceptions' dialog tables</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>
+			<Button Content="Load" x:Name="BtnLoad" Grid.Column="2" Height="30" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" Click="BtnLoad_Click" 
+>
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Loads any data saved especially for this tool (via "Save" button)</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>
+			<Button Content="Zoom Reset" x:Name="BtnResetZoom" Grid.Column="3" Height="30" Click="BtnResetZoom_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" 	>
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Resets the zoom back to 1x</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>
+			<Button Content="Clear" x:Name="BtnClear" Grid.Column="4" Height="30" Click="BtnClear_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" 	>
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Clears all nodes besides the rootnode</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>
 		</Grid>
 	</Grid>
 </Window>

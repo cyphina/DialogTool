@@ -192,5 +192,14 @@
   <ItemGroup>
     <Resource Include="Images\hijirichristmasTransB.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ButtonClicked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ButtonHover.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

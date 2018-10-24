@@ -68,8 +68,8 @@ namespace UPDialogTool
 	    protected MainWindow mainWindowRef = null;
 
 	    public int nodeID; //Unique id for each node  
-	    public LinkedList<UPNodeConnector> fromLines = new LinkedList<UPNodeConnector>(); //Lines leading to the next dialog
-	    public LinkedList<UPNodeConnector> toLines = new LinkedList<UPNodeConnector>(); //Dialog lines which lead to this node	
+	    public LinkedList<UPNodeConnector> fromLines = new LinkedList<UPNodeConnector>(); //Lines leading to the next dialog (come out from this node)
+	    public LinkedList<UPNodeConnector> toLines = new LinkedList<UPNodeConnector>(); //Dialog lines which lead to this node (come to this node)	
 
 		/**Any node classes must have a XML named attribute that exposes the render transform*/
 	    public abstract TranslateTransform Translate { get; set;  } 
@@ -183,7 +183,7 @@ namespace UPDialogTool
 		    //If we're dragging an edge from this node, display it
 		    if (mainWindowRef.dragState == EDragState.EConnectorDrag)
 		    {
-			    if (!mainWindowRef.draggedUponNode.Equals(this))
+			    if (!mainWindowRef.draggedUponNode.Equals(this) && !toLines.Any(elem => elem.fromNodeRef == mainWindowRef.draggedUponNode))
 			    {
 				    UPNodeConnector line = new UPNodeConnector();
 				    //line.IsHitTestVisible = false;
@@ -205,6 +205,7 @@ namespace UPDialogTool
 				    line.toNodeRef = this;
 
 				    mainWindowRef.canvMain.Children.Add(line);
+					Canvas.SetZIndex(line,-1);
 
 				    mainWindowRef.draggedUponNode.fromLines.AddLast(line);
 				    toLines.AddLast(line);
@@ -257,12 +258,16 @@ namespace UPDialogTool
 		    while(toLines.Count > 0)
 		    {
 			    mainWindowRef.canvMain.Children.Remove(toLines.Last.Value);
+				mainWindowRef.edgeList.Remove(toLines.Last.Value);
+				toLines.Last.Value.fromNodeRef.fromLines.Remove(toLines.Last.Value);
 			    toLines.RemoveLast();							
 		    }
 
 		    while(fromLines.Count > 0)
 		    {
 			    mainWindowRef.canvMain.Children.Remove(fromLines.Last.Value);
+				mainWindowRef.edgeList.Remove(fromLines.Last.Value);
+				fromLines.Last.Value.toNodeRef.toLines.Remove(fromLines.Last.Value);
 			    fromLines.RemoveLast();
 		    }
 

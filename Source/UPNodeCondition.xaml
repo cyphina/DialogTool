@@ -35,15 +35,50 @@
 			<Label x:Name="lblActor" Content="Conditional Type" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0" Foreground="#FF071C42" IsHitTestVisible="False" FontSize="18"/>
 			<ComboBox x:Name="cboxCondType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF573691" Margin="10,35,0,0" SelectedIndex="0">
 				<ComboBoxItem Content="None"/>
-				<ComboBoxItem Content="HasQuestCond"/>
-				<ComboBoxItem Content="QuestCompletionCond"/>
-				<ComboBoxItem Content="GoalsCompletionCond"/>
-				<ComboBoxItem Content="OwnsItemCond"/>
-				<ComboBoxItem Content="HadConversationCond"/>
-				<ComboBoxItem Content="CustomCond"/>
-				<ComboBoxItem/>
+				<ComboBoxItem Content="HasQuestCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Checks to see if the quest named (value1 = the id without parent tag) is being done currently</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="QuestCompletionCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Checks for when a certain quest is completed.  Value1 = (Quest GameplayTag ID (without parent tag appended))</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="GoalsCompletionCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Given the Quest GameplayTag ID w/o parent tag (value1), ensures that the goal indices (0 based indices) listed in values 2 and onward are complete</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="OwnsItemCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Checks for when an item is owned in the inventory.  Value1 = (Item Tag ID)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="HadConversationCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Talked to NPC about this topic.  Value1 = (NPC NameTag w/o parent tag), Value2 = (Conversation Topic ID w/o parent tag)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="CustomCond">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>A condition where (value1) is passed in dynamically to essentially make this condition a boolean wrapper.  Set Value1 to != 0 to make it true, and set it to 0 to make it false</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
 			</ComboBox>
-			<Button x:Name="btnNodeDrag" Content="" Width="36" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-18,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" Background="{x:Null}" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown">
+			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">
@@ -51,16 +86,16 @@
 								<ControlTemplate TargetType="Button">
 									<Border x:Name="border">
 										<Grid>
-											<Image x:Name ="btnImage" Source="Images/GreenButtonShadow.png" Width="32" Height="32"/>
+											<Image x:Name ="btnImage" Source="Images/Button.png" Width="40" Height="32"/>
 											<ContentPresenter></ContentPresenter>
 										</Grid>
 									</Border>
 									<ControlTemplate.Triggers>
 										<Trigger Property="IsMouseOver" Value="True">
-											<Setter TargetName="btnImage" Property="Source" Value ="Images/GreenButtonShadowHover.png"/>
+											<Setter TargetName="btnImage" Property="Source" Value ="Images/ButtonHover.png"/>
 										</Trigger>
 										<Trigger Property="IsPressed" Value="True">
-											<Setter TargetName="btnImage" Property="Source" Value ="Images/GreenButtonShadowPress.png"/>
+											<Setter TargetName="btnImage" Property="Source" Value ="Images/ButtonClicked.png"/>
 										</Trigger>
 									</ControlTemplate.Triggers>
 								</ControlTemplate>

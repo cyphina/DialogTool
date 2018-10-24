@@ -76,5 +76,15 @@ namespace UPDialogTool
 		{
 			InitializeComponent();
 		}
+
+		private void lnNodeConnector_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			if(Keyboard.IsKeyDown(Key.LeftAlt))
+			{
+				Clear();
+				e.Handled = true;
+			}
+			e.Handled = false;
+		}
 	}
 }

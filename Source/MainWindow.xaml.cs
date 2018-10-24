@@ -565,7 +565,6 @@ namespace UPDialogTool
 					foreach (UPNodeBase node in selectedNodes)
 					{
 						node.Delete();
-						--nodeNum;
 					}
 					break;
 			}

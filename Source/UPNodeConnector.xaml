@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UPDialogTool"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" IsHitTestVisible="False">
-	<Line x:Name="lnNodeConnector" Y2="100" StrokeThickness="5" Fill="Black" X2="100" MouseDown="lnNodeConnector_MouseDown">
+             d:DesignHeight="450" d:DesignWidth="800" IsHitTestVisible="True">
+	<Line x:Name="lnNodeConnector" Y2="100" StrokeThickness="5" Fill="Black" X2="100" MouseDown="lnNodeConnector_MouseDown" MouseLeftButtonDown="lnNodeConnector_MouseLeftButtonDown" StrokeEndLineCap="Square" StrokeStartLineCap="Square">
 		<Line.Stroke>
 			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 				<GradientStop Color="#FF256376" Offset="0"/>
