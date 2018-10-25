@@ -349,9 +349,14 @@ namespace UPDialogTool
 		private void Clear()
 		{
 			canvMain.Children.Clear();
-			nodeList.Clear();
+
+			selectedNodes.UnionWith(nodeList);
+			foreach(UPNodeBase node in selectedNodes)
+				node.Delete();
+			
 			selectedNodes.Clear();
-			edgeList.Clear();
+
+			//Readd the helper visuals to the canvas since we cleared them as well
 			canvMain.Children.Add(connector);
 			canvMain.Children.Add(rectSelection);
 		}
@@ -566,6 +571,7 @@ namespace UPDialogTool
 					{
 						node.Delete();
 					}
+					selectedNodes.Clear();
 					break;
 			}
 		}
