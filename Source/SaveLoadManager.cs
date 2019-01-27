@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -14,6 +14,12 @@ namespace UPDialogTool
     {
 	    private Dictionary<int, UPNodeBase> loadedNodes = new Dictionary<int, UPNodeBase>();
 		private LinkedList<UPNodeConnector> loadedEdges = new LinkedList<UPNodeConnector>();
+		private double canvasHalfWidth, canvasHalfHeight;
+
+		public SaveLoadManager(Canvas nodeCanvas) {
+			canvasHalfWidth = nodeCanvas.Width / 2;
+			canvasHalfHeight = nodeCanvas.Height / 2; 
+		}
 
 	    public void SaveNodes(HashSet<UPNodeBase> nodeList, JsonWriter writer)
 	    {
@@ -52,8 +58,8 @@ namespace UPDialogTool
 			writer.WriteValue(node.Actor);
 
 			////Save Node Position
-			writer.WriteValue(node.Translate.X);
-			writer.WriteValue(node.Translate.Y);
+			writer.WriteValue(node.Translate.X - canvasHalfWidth);
+			writer.WriteValue(node.Translate.Y - canvasHalfHeight);
 		}
 
 		public void SaveEdgeData(UPNodeConnector edge, JsonWriter writer)
@@ -98,10 +104,14 @@ namespace UPDialogTool
 				node.Actor = (string) reader.Value;
 				reader.Read();
 
-				node.Translate.X = (double) reader.Value;
+
+
+				node.Translate.X = (double) reader.Value + canvasHalfWidth;
+				Console.Write(node.Translate.X);
 				reader.Read();
 
-				node.Translate.Y = (double) reader.Value;
+				node.Translate.Y = (double) reader.Value + canvasHalfHeight;
+				Console.WriteLine(node.Translate.Y);
 
 				loadedNodes.Add(node.nodeID, node);		
 			}
@@ -114,6 +124,10 @@ namespace UPDialogTool
 			while (reader.Read() && reader.TokenType != JsonToken.EndArray)
 			{
 				UPNodeConnector edge = new UPNodeConnector();
+				edge.lnNodeConnector.StrokeThickness = 10;
+				edge.lnNodeConnector.StrokeStartLineCap = System.Windows.Media.PenLineCap.Flat;
+				edge.lnNodeConnector.StrokeEndLineCap = System.Windows.Media.PenLineCap.Flat;
+
 				int fromNodeID = (int) (long) reader.Value;
 				edge.fromNodeRef = loadedNodes[fromNodeID];
 				edge.fromNodeRef.fromLines.AddLast(edge);
@@ -122,6 +136,7 @@ namespace UPDialogTool
 				int toNodeID = (int) (long) reader.Value;
 				edge.toNodeRef = loadedNodes[toNodeID];
 				edge.toNodeRef.toLines.AddLast(edge);
+
 				loadedEdges.AddLast(edge);
 			}
 			return loadedEdges;

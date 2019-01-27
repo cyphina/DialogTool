@@ -29,11 +29,9 @@
 				</Border.BorderBrush>
 			</Border>
 			<Label x:Name="lblObjects" Content="Trigger Objects (seperate by commas):" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,54,0,0" Foreground="#FF76205F" Height="26" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtObjects" HorizontalAlignment="Left" Width="220" Background="#7FDCDCDC" BorderBrush="#FF20AA97" Margin="10,75,0,0" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Top"/>
 			<Label x:Name="lblValues" Content="Trigger Values (seperate by commas);" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,0,0,31" Foreground="#FF254066" Height="26" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtValues" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFE487C2" Margin="10,0,0,17" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Bottom" SpellCheck.IsEnabled="True"/>
 			<Label x:Name="lblActor" Content="Trigger Type" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0" Foreground="#FFDC9329" IsHitTestVisible="False" FontSize="18"/>
-			<ComboBox x:Name="cboxTriggerType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF36915B" Margin="10,35,0,0" SelectedIndex="0">
+			<ComboBox x:Name="cboxTriggerType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF36915B" Margin="10,35,0,0" SelectedIndex="0" TabIndex="0">
 				<ComboBoxItem Content="None"/>
 				<ComboBoxItem Content="ChangeDialog">
 					<ComboBoxItem.ToolTip>
@@ -119,8 +117,52 @@
 						</ToolTip>
 					</ComboBoxItem.ToolTip>
 				</ComboBoxItem>
+				<ComboBoxItem Content="DestroyNPCTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Destroys the object with name (object 1)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="MoveNPCTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Moves the object with name (object 1) to location X: (value 1), Y: (value2), Z: (value3)</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="AddItemTrigger">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Adds an item to hero (object 1) with id (value 1) and count (value 2).  If no hero is specified, then the interacting hero gets the item</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="LearnConversationTopic">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Adds the fully qualified gameplay tag name (value 1) as a new learned dialog topic</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="SetNPCFollow">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Sets the NPC with name (object 1) to follow the hero with name (object 2).  If no hero name is specified, then the interacting hero is followed*/
+							</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
+				<ComboBoxItem Content="SetNPCWantConverse">
+					<ComboBoxItem.ToolTip>
+						<ToolTip>
+							<TextBlock>Sets the IntimateNPC with name (object 1) to allow conversations (!= 0) or not (==0) (value1)*/
+							</TextBlock>
+						</ToolTip>
+					</ComboBoxItem.ToolTip>
+				</ComboBoxItem>
 			</ComboBox>
-			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
+			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}" IsTabStop="False">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">
@@ -147,6 +189,8 @@
 				</Button.Style>
 			</Button>
 			<Ellipse x:Name="ellipseToPoint" Width="36" Height="36" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-18,0,0,0" Visibility="Hidden" IsHitTestVisible="False"/>
+			<TextBox x:Name="txtObjects" HorizontalAlignment="Left" Width="220" Background="#7FDCDCDC" BorderBrush="#FF20AA97" Margin="10,75,0,0" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Top" TabIndex="0"/>
+			<TextBox x:Name="txtValues" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFE487C2" Margin="10,0,0,16.96" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Bottom" SpellCheck.IsEnabled="True" TabIndex="0"/>
 		</Grid>
 	</AdornerDecorator>
 </local:UPNodeBase>

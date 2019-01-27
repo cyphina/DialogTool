@@ -198,8 +198,8 @@ namespace UPDialogTool
 				    line.lnNodeConnector.Y2 = endPoint.Y;
 
 				    line.lnNodeConnector.StrokeThickness = 10;
-				    line.lnNodeConnector.StrokeStartLineCap = PenLineCap.Round;
-				    line.lnNodeConnector.StrokeEndLineCap = PenLineCap.Triangle;
+				    line.lnNodeConnector.StrokeStartLineCap = PenLineCap.Flat;
+				    line.lnNodeConnector.StrokeEndLineCap = PenLineCap.Flat;
 
 				    line.fromNodeRef = mainWindowRef.draggedUponNode;
 				    line.toNodeRef = this;

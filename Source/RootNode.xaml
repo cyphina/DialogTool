@@ -29,7 +29,7 @@
 			</Border.BorderBrush>
 			<TextBlock x:Name="txtBRootNode" Text="Root Node" Foreground="#FF152364" FontSize="36" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
 		</Border>
-		<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
+		<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}" IsTabStop="False">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">

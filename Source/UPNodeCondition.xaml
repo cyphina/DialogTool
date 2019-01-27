@@ -29,11 +29,9 @@
 				</Border.BorderBrush>
 			</Border>
 			<Label x:Name="lblValue1" Content="Reverse Result?:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,54,0,0" Foreground="#FF5F7620" Height="26" IsHitTestVisible="False"/>
-			<CheckBox x:Name="chkReverse" HorizontalAlignment="Left" Width="220" Background="#7FDCDCDC" BorderBrush="#FF2D20AA" Margin="10,75,0,0" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Top"/>
 			<Label x:Name="lblValue2" Content="Conditional Params (Comma Seperated):" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,0,0,40" Foreground="#FF662525" Height="26" IsHitTestVisible="False"/>
-			<TextBox x:Name="txtValue2" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFAA2078" Margin="10,0,0,8" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Bottom" SpellCheck.IsEnabled="True" Height="37"/>
 			<Label x:Name="lblActor" Content="Conditional Type" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0" Foreground="#FF071C42" IsHitTestVisible="False" FontSize="18"/>
-			<ComboBox x:Name="cboxCondType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF573691" Margin="10,35,0,0" SelectedIndex="0">
+			<ComboBox x:Name="cboxCondType" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FF573691" Margin="10,35,0,0" SelectedIndex="0" TabIndex="0">
 				<ComboBoxItem Content="None"/>
 				<ComboBoxItem Content="HasQuestCond">
 					<ComboBoxItem.ToolTip>
@@ -78,7 +76,7 @@
 					</ComboBoxItem.ToolTip>
 				</ComboBoxItem>
 			</ComboBox>
-			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
+			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}" IsTabStop="False">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">
@@ -105,6 +103,8 @@
 				</Button.Style>
 			</Button>
 			<Ellipse x:Name="ellipseToPoint" Width="36" Height="36" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-18,0,0,0" Visibility="Hidden" IsHitTestVisible="False"/>
+			<CheckBox x:Name="chkReverse" HorizontalAlignment="Left" Background="#7FDCDCDC" BorderBrush="#FF2D20AA" Margin="10,75,0,0" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Top" TabIndex="0"/>
+			<TextBox x:Name="txtValue2" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFAA2078" Margin="10,0,0,8" RenderTransformOrigin="0.528,-0.36" VerticalAlignment="Bottom" SpellCheck.IsEnabled="True" Height="37" TabIndex="0"/>
 		</Grid>
 	</AdornerDecorator>
 </local:UPNodeBase>

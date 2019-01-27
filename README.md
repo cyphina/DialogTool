@@ -5,7 +5,7 @@ The tool has similar controls to the UE4 node editor.  I would've tried to exten
 tutorials I followed were outdated/a bit off for my purposes.  
 
 Instructions:
-To setup, download the files, and add them to a WPF c# project.  
+To setup, download the files, and add them to a WPF c# project. Or use the exe I added.  
 
 The tools controls are based off of the UE4 node editor.  Left click to select nodes, CTRL click to toggle selection on and off for a node, and left click drag to select multiple nodes with the selection rectangle.  Right click pans around the view, and clicking on selected nodes drags all the nodes selected.  Edges can be delete by alt clicking on them.  Press delete to delete the selected nodes and all of their edges.
 

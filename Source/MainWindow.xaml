@@ -7,32 +7,37 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700
 		" Width="1000" MouseWheel="winMain_MouseWheel">
+	<Window.Resources>
+		<local:InvertIntConverter x:Key="intConvert"/>
+	</Window.Resources>
 	<Grid x:Name="grdMain">
 		<Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
 			<Grid x:Name="canvTitleBar">
 				<Label x:Name="lblTitle" Content="{Binding Text, ElementName=txtTitle}" FontSize="20" Foreground="#FFFFEFEF" Background="#FFAA2F2F" MouseDoubleClick="lblTitle_MouseDoubleClick"/>
-				<TextBox x:Name="txtTitle" Background="#FF781E1E" Visibility="Hidden" Text ="Double Click this to Change Title" FontSize="20" KeyDown="txtTitle_KeyDown"/>
+				<TextBox x:Name="txtTitle" Background="#FF781E1E" Visibility="Hidden" Text ="Double Click this to Change Title" FontSize="20" KeyDown="txtTitle_KeyDown" IsTabStop="False"/>
 			</Grid>
 		</Grid>
 		<Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="1">
 			<Border x:Name ="UPBorder" BorderThickness="5,5,5,10" Margin="0" Grid.Row="0" BorderBrush="#FF133566" Grid.RowSpan="2" Grid.ColumnSpan="2">
-				<Canvas x:Name="canvMain" MouseLeftButtonDown="canvMain_MouseLeftButtonDown" MouseRightButtonDown="canvMain_MouseRightButtonDown" MouseMove="canvMain_MouseMove" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="canvMain_MouseLeftButtonUp" MouseRightButtonUp="canvMain_MouseRightButtonUp" Width="10000" Height="10000" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="True" KeyDown="canvMain_KeyDown">
+				<Canvas x:Name="canvMain" MouseLeftButtonDown="canvMain_MouseLeftButtonDown" MouseRightButtonDown="canvMain_MouseRightButtonDown" MouseMove="canvMain_MouseMove" RenderTransformOrigin="0.5,0.5" MouseLeftButtonUp="canvMain_MouseLeftButtonUp" MouseRightButtonUp="canvMain_MouseRightButtonUp" Width="50000" Height="50000" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="True" KeyDown="canvMain_KeyDown">
 					<Canvas.Background>
-						<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-							<GradientStop Color="Black" Offset="0"/>
-							<GradientStop Color="#FF385FB2" Offset="1"/>
-							<GradientStop Color="#FF405685" Offset="0.506"/>
-						</LinearGradientBrush>
+						<RadialGradientBrush>
+							<GradientStop Color="#FF080B32" Offset="0"/>
+							<GradientStop Color="#FF1F70B4" Offset="1"/>
+							<GradientStop Color="#FF0A1266" Offset="0.208"/>
+							<GradientStop Color="#FF263F6C" Offset="0.646"/>
+							<GradientStop Color="#FF172874" Offset="0.448"/>
+							<GradientStop Color="#FF536D9B" Offset="0.841"/>
+						</RadialGradientBrush>
 					</Canvas.Background>
 					<Canvas.RenderTransform>
-						<TransformGroup>
-							<ScaleTransform x:Name="scale"/>
+						<TransformGroup x:Name="canvTransformGroup">
 							<SkewTransform/>
 							<RotateTransform/>
 							<TranslateTransform x:Name="translation"/>
 						</TransformGroup>
 					</Canvas.RenderTransform>
-					<local:RootNode x:Name="root" RenderTransformOrigin="0.5,0.5" Canvas.Left="0" Canvas.Top="0"/>
+					<local:RootNode x:Name="root" RenderTransformOrigin="0.5,0.5" Canvas.Left="0" Canvas.Top="-3" VerticalAlignment="Center" HorizontalAlignment="Center" />
 					<Rectangle x:Name="rectSelection" Height="100" Canvas.Left="0" Canvas.Top="0" Width="100" Opacity="0.5" RenderTransformOrigin="0,0" Fill="#99933737" Visibility="Collapsed" Margin="-100,0,0,0"/>
 				</Canvas>
 			</Border>
@@ -44,22 +49,23 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" VerticalAlignment="Bottom" >
+			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" IsTabStop="False" >
 				<Button.ToolTip>
 					<ToolTip>
 						<TextBlock>Saves data to be reopenable by the DialogTool at a later time</TextBlock>
 					</ToolTip>
 				</Button.ToolTip>
 			</Button>
-			<Button Content="Export" x:Name="BtnExport" Grid.Column="1" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnExport_Click">
+			<Button Content="Export" x:Name="BtnExport" Grid.Column="1" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnExport_Click" IsTabStop="False">
 				<Button.ToolTip>
 					<ToolTip>
 						<TextBlock>Save the data in a format which can be copied into one of Unbounded Perceptions' dialog tables</TextBlock>
 					</ToolTip>
 				</Button.ToolTip>
 			</Button>
-			<Button Content="Load" x:Name="BtnLoad" Grid.Column="2" Height="30" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" Click="BtnLoad_Click" 
+			<Button Content="Load" x:Name="BtnLoad" Grid.Column="2" Height="30" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" Click="BtnLoad_Click" IsTabStop="False" 
 >
 				<Button.ToolTip>
 					<ToolTip>
@@ -67,20 +73,32 @@
 					</ToolTip>
 				</Button.ToolTip>
 			</Button>
-			<Button Content="Zoom Reset" x:Name="BtnResetZoom" Grid.Column="3" Height="30" Click="BtnResetZoom_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" 	>
+			<Button Content="Zoom Reset" x:Name="BtnResetZoom" Grid.Column="3" Height="30" Click="BtnResetZoom_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" IsTabStop="False" 	>
 				<Button.ToolTip>
 					<ToolTip>
 						<TextBlock>Resets the zoom back to 1x</TextBlock>
 					</ToolTip>
 				</Button.ToolTip>
 			</Button>
-			<Button Content="Clear" x:Name="BtnClear" Grid.Column="4" Height="30" Click="BtnClear_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" 	>
+			<Button Content="Clear" x:Name="BtnClear" Grid.Column="4" Height="30" Click="BtnClear_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" IsTabStop="False" 	>
 				<Button.ToolTip>
 					<ToolTip>
 						<TextBlock>Clears all nodes besides the rootnode</TextBlock>
 					</ToolTip>
 				</Button.ToolTip>
-			</Button>
+			</Button>		
+			<Label x:Name="lblLocation" Grid.Column="5" HorizontalAlignment="Center" FontSize="20" Foreground="#FFA7B840">
+				<Label.Content>
+					<TextBlock Background="#FF0D111B">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}X: {0}  Y: {1}">
+								<Binding ElementName="translation" Path="X" Converter="{StaticResource intConvert}"/>
+								<Binding Path="Y" ElementName="translation"/>
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+				</Label.Content>
+			</Label>
 		</Grid>
 	</Grid>
 </Window>

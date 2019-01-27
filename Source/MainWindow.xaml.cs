@@ -6,9 +6,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
+
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
@@ -72,7 +74,7 @@ namespace UPDialogTool
 		//Number of nodes ever created in the program.  Used to give each node a unique id.
 		private int nodeNum = 0;
 
-		private SaveLoadManager saveLoadManager = new SaveLoadManager();
+		private SaveLoadManager saveLoadManager;
 
 		public MainWindow()
 		{
@@ -83,26 +85,47 @@ namespace UPDialogTool
 			connector.Data = connectorLine;
 			canvMain.Children.Add(connector);
 
+			root.Translate.X = canvMain.Width / 2;
+			root.Translate.Y = canvMain.Height /2;
 			nodeList.Add(root);
-			root.Translate.X = 5000;
-			root.Translate.Y = 5020;
+
+			saveLoadManager = new SaveLoadManager(canvMain);
 		}
 
 		/// <summary>
 		/// A little lesson on zooming:
 		/// To emulate a zoom, we scale at a certain location.  ScaleAt takes a scalar multiplier for each direction, and a location of the origin.  Scaling around
-		/// a point means we first translate our point to the origin, scale it, and then translate the scaled object back.  When translating the scaled object back,
-		/// the translation will also get scaled, so zooming out will essentially bring the object closer to the origin point since the offset is scaled down, and vice
-		/// versa.
+		/// a point means we first translate our point to the origin, scale it, and then translate the scaled object back.
+		/// This can be represented with the equation (x', y') = ([x - a] * scale + a, [y - b] * scale + b)
+		/// Points furthest away from the scaling point get pushed further away when scaling inwards, and vice versa for scaling outwards
 		/// </summary>
 		/// <param name="newValue"></param>
-		private void ZoomViewBox(double newValue)
+		private void ZoomViewBox(double deltaValue)
 		{
 			Point p = Mouse.GetPosition(UPBorder);
-			scale.ScaleX = newValue;
-			scale.ScaleY = newValue;
-			scale.CenterX = p.X - UPBorder.ActualWidth / 2;
-			scale.CenterY = p.Y - UPBorder.ActualHeight / 2;
+			ScaleTransform s = new ScaleTransform();
+			s.CenterX =  p.X - UPBorder.ActualWidth / 2;
+			s.CenterY =  p.Y - UPBorder.ActualHeight / 2;		
+
+			s.ScaleX = deltaValue;
+			s.ScaleY = deltaValue;
+
+			//Use a transform group because exposing a scale property and specifying the scale directly 
+			//causes a huge jump if we zoom in and then zoom out far away since in that case the center is so far apart and
+			//the deltaValue used to be the zoomValue so it would move the opposite direciton since the 
+			//small decrease/increase in value didn't compensate for the large gap
+			//that is caused by the extremely large distance from the center being zoomed.
+			TransformGroup t = new TransformGroup();
+			t.Children.Add(canvMain.RenderTransform);
+			t.Children.Add(s);
+
+			canvMain.RenderTransform = t;
+		}
+
+		//Lerp between t for values of t between 0 and 1
+		private double Lerp(double start, double finish, double t)
+		{
+			return (1 - t) * start + t * finish;
 		}
 
 		private void winMain_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -111,16 +134,16 @@ namespace UPDialogTool
 			{
 				if (zoomValue < maxZoom)
 				{
-					zoomValue *= 1.25;
-					ZoomViewBox(zoomValue);
+					zoomValue *= 1.1;
+					ZoomViewBox(1.1);
 				}
 			}
 			else
 			{
 				if (zoomValue > minZoom)
 				{
-					zoomValue *= 0.8;
-					ZoomViewBox(zoomValue);
+					zoomValue *= .9;
+					ZoomViewBox(0.9);
 				}
 			}
 		}
@@ -167,6 +190,7 @@ namespace UPDialogTool
 			{
 				node.IsSelected = false;
 			}
+			root.IsSelected = false;
 
 			if (Keyboard.IsKeyDown(Key.F))
 			{
@@ -214,8 +238,8 @@ namespace UPDialogTool
 			Point mousePosition = e.GetPosition(UPBorder);
 			mouseDelta = mousePosition - savedMousePosition;
 
-			translation.X = GridSnap(canvasPanInitialTransform.X + mouseDelta.X, 20);
-			translation.Y = GridSnap(canvasPanInitialTransform.Y + mouseDelta.Y, 20);
+			translation.X = GridSnap(canvasPanInitialTransform.X + mouseDelta.X * (1/zoomValue), 20);
+			translation.Y = GridSnap(canvasPanInitialTransform.Y + mouseDelta.Y * (1/zoomValue), 20);
 		}
 
 		private void RectSelect(MouseEventArgs e)
@@ -340,32 +364,29 @@ namespace UPDialogTool
 			return rectSelection.Visibility == Visibility.Visible;
 		}
 
+		private void ResetZoom()
+		{
+			ZoomViewBox(1 / zoomValue);
+			zoomValue = 1;
+		}
+
 		private void BtnResetZoom_Click(object sender, RoutedEventArgs e)
 		{
-			zoomValue = 1;
-			ZoomViewBox(zoomValue);
+			ResetZoom();
 		}
 
 		private void Clear()
 		{
-			canvMain.Children.Clear();
-
 			selectedNodes.UnionWith(nodeList);
-			foreach(UPNodeBase node in selectedNodes)
+			foreach (UPNodeBase node in selectedNodes)
 				node.Delete();
-			
-			selectedNodes.Clear();
 
-			//Readd the helper visuals to the canvas since we cleared them as well
-			canvMain.Children.Add(connector);
-			canvMain.Children.Add(rectSelection);
+			selectedNodes.Clear();
 		}
 
 		private void BtnClear_Click(object sender, RoutedEventArgs e)
 		{
 			Clear();
-			nodeList.Add(root);
-			canvMain.Children.Add(root);
 		}
 
 		/**BFS search to get the nodes connected to the root in a nice order for exporting*/
@@ -418,7 +439,7 @@ namespace UPDialogTool
 						//Save zoom state
 						saveLoadManager.WriteProperty(writer, "Zoom", zoomValue);
 
-						//Save number of nodes created
+						//Save number of nodes created	
 						saveLoadManager.WriteProperty(writer, "NodeNum", nodeNum);
 
 						//Save Title
@@ -453,28 +474,34 @@ namespace UPDialogTool
 										case "Nodes":
 											reader.Read(); //array start			
 											List<UPNodeBase> loadedNodes = saveLoadManager.LoadNodeData(reader);
-											foreach (UPNodeBase node in loadedNodes)
+											for (int i = 1; i < loadedNodes.Count; ++i)
 											{
-												nodeList.Add(node);
-												canvMain.Children.Add(node);
+												nodeList.Add(loadedNodes[i]);
+												canvMain.Children.Add(loadedNodes[i]);
 											}
 
 											if (loadedNodes.Count > 0)
+											{
+												canvMain.Children.Remove(root);
 												root = loadedNodes[0] as RootNode;
+												canvMain.Children.Add(root);
+											}
 											break;
+
 										case "Edges":
 											reader.Read();
 											edgeList = saveLoadManager.LoadEdges(reader, nodeList);
 											foreach (UPNodeConnector edge in edgeList)
 											{
+												Canvas.SetZIndex(edge, -1);
 												canvMain.Children.Add(edge);
 											}
 											break;
 										case "Zoom":
 											reader.Read();
-											zoomValue = (double)reader.Value;
-											scale.ScaleX = zoomValue;
-											scale.ScaleY = zoomValue;
+											//ResetZoom();
+											//zoomValue = (double)reader.Value;
+											//ZoomViewBox(zoomValue);
 											break;
 										case "NodeNum":
 											reader.Read();
@@ -487,7 +514,6 @@ namespace UPDialogTool
 									}
 								}
 							}
-
 							MessageBox.Show("Load Successful");
 						}
 					}

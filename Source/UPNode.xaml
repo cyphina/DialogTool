@@ -30,10 +30,9 @@
 				</Border.BorderBrush>
 			</Border>
 			<Label x:Name="lblNodeDialog" Content="Dialog:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,43,0,0" Foreground="#FF6C5E5B" IsHitTestVisible="False" FontSize="14"/>
-			<TextBox x:Name="txtDialog" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFCA94DA" Margin="10,66,0,10" RenderTransformOrigin="0.528,-0.36" Text="{Binding Dialog}"/>
 			<Label x:Name="lblActor" Content="Actor:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,4,0,0" Foreground="#FF1C0046" IsHitTestVisible="False" FontSize="14"/>
-			<TextBox x:Name="txtActor" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FFC9C348" Margin="10,26,0,0" Text="{Binding DialogActor}"/>
-			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}">
+			<TextBox x:Name="txtActor" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="220" Background="#7FDCDCDC" BorderBrush="#FFC9C348" Margin="10,26,0,0" Text="{Binding DialogActor}" TabIndex="0"/>
+			<Button x:Name="btnNodeDrag" Content="" Width="40" Foreground="#FFB04646" BorderBrush="{x:Null}" Margin="0,0,-17,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="OnNodeBtnPreviewLMBDown" Background="{x:Null}" IsTabStop="False">
 				<Button.Style>
 					<Style TargetType="Button">
 						<Setter Property="Template">
@@ -60,6 +59,7 @@
 				</Button.Style>
 			</Button>
 			<Ellipse x:Name="ellipseToPoint" Width="36" Height="36" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-18,0,0,0" Visibility="Hidden" IsHitTestVisible="False"/>
+			<TextBox x:Name="txtDialog" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Width="220" Background="#7FDCDCDC" BorderBrush="#FFCA94DA" Margin="10,66,0,10" RenderTransformOrigin="0.528,-0.36" Text="{Binding Dialog}" TabIndex="0"/>
 		</Grid>
 	</AdornerDecorator>
 </local:UPNodeBase>
