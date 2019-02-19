@@ -1,7 +1,3 @@
-Inverted X value to make dragging right (moving nodes left) represent a positive shift positional display.  
-Fixed root node positioning
-Added X and Y position indicator
-Saved position in a way that doesn't vary with canvas size
-Removed saving and loading zoom to prevent nodes moving on load
-Fixed TabIndex (when indexes are equal, the tabs go by some hidden id which can be reset by cutting and pasting the control in place)
-Fixed checkbox size
+Changed the position indicator to span 2 lines so the values don't go out of the window
+Added a new combine button that takes as folder and then recursively combines all .json files in the folders and its subdirectories into one that can be directly fed to a UE4 table.
+Updated README

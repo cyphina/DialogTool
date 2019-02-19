@@ -50,8 +50,9 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" IsTabStop="False" >
+			<Button Content="Save" x:Name="BtnSave" Height="30" Background="#CC000000" FontSize="16" Foreground="#FFFFE5D3" Click="BtnSave_Click" IsTabStop="False" Margin="10,0,0,0" >
 				<Button.ToolTip>
 					<ToolTip>
 						<TextBlock>Saves data to be reopenable by the DialogTool at a later time</TextBlock>
@@ -87,11 +88,18 @@
 					</ToolTip>
 				</Button.ToolTip>
 			</Button>		
-			<Label x:Name="lblLocation" Grid.Column="5" HorizontalAlignment="Center" FontSize="20" Foreground="#FFA7B840">
+			<Button Content="Combine" x:Name="BtnCombine" Grid.Column="5" Height="30" Click="BtnCombine_Click" FontSize="16" Background="#CC000000" Foreground="#FFFFE5D3" IsTabStop="False" 	>
+				<Button.ToolTip>
+					<ToolTip>
+						<TextBlock>Combines all the JSON files in a folder</TextBlock>
+					</ToolTip>
+				</Button.ToolTip>
+			</Button>	
+			<Label x:Name="lblLocation" Grid.Column="6" FontSize="18" Foreground="#FFA7B840" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<Label.Content>
 					<TextBlock Background="#FF0D111B">
 						<TextBlock.Text>
-							<MultiBinding StringFormat="{}X: {0}  Y: {1}">
+							<MultiBinding StringFormat="{}X: {0} &#x0a;Y: {1}">
 								<Binding ElementName="translation" Path="X" Converter="{StaticResource intConvert}"/>
 								<Binding Path="Y" ElementName="translation"/>
 							</MultiBinding>

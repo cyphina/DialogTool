@@ -86,7 +86,7 @@ namespace UPDialogTool
 			canvMain.Children.Add(connector);
 
 			root.Translate.X = canvMain.Width / 2;
-			root.Translate.Y = canvMain.Height /2;
+			root.Translate.Y = canvMain.Height / 2;
 			nodeList.Add(root);
 
 			saveLoadManager = new SaveLoadManager(canvMain);
@@ -104,8 +104,8 @@ namespace UPDialogTool
 		{
 			Point p = Mouse.GetPosition(UPBorder);
 			ScaleTransform s = new ScaleTransform();
-			s.CenterX =  p.X - UPBorder.ActualWidth / 2;
-			s.CenterY =  p.Y - UPBorder.ActualHeight / 2;		
+			s.CenterX = p.X - UPBorder.ActualWidth / 2;
+			s.CenterY = p.Y - UPBorder.ActualHeight / 2;
 
 			s.ScaleX = deltaValue;
 			s.ScaleY = deltaValue;
@@ -238,8 +238,8 @@ namespace UPDialogTool
 			Point mousePosition = e.GetPosition(UPBorder);
 			mouseDelta = mousePosition - savedMousePosition;
 
-			translation.X = GridSnap(canvasPanInitialTransform.X + mouseDelta.X * (1/zoomValue), 20);
-			translation.Y = GridSnap(canvasPanInitialTransform.Y + mouseDelta.Y * (1/zoomValue), 20);
+			translation.X = GridSnap(canvasPanInitialTransform.X + mouseDelta.X * (1 / zoomValue), 20);
+			translation.Y = GridSnap(canvasPanInitialTransform.Y + mouseDelta.Y * (1 / zoomValue), 20);
 		}
 
 		private void RectSelect(MouseEventArgs e)
@@ -609,5 +609,87 @@ namespace UPDialogTool
 				txtTitle.Visibility = Visibility.Hidden;
 			}
 		}
+
+		//Combine the JSON files in a folder into one
+		private void BtnCombine_Click(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+			folderDialog.SelectedPath = @"D:\Documents\Visual Studio 2017\UPDialogTool\UPDialogTool\bin\Debug";
+			if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				try
+				{
+					LinkedList<string> dialogFilePaths = new LinkedList<string>();
+					recursiveDirSearch(folderDialog.SelectedPath, dialogFilePaths);
+					const int chunkSize = 2 * 1024;
+					using (var output = File.Create("dialogList.json"))
+					{
+						output.WriteByte(91);
+						foreach (string fileName in dialogFilePaths)
+						{
+							using (var input = File.OpenRead(fileName))
+							{
+								var buffer = new byte[chunkSize];
+								int bytesRead;
+
+								//Remove the first [, line breaks, and spaces
+								bytesRead = input.Read(buffer, 0, buffer.Length);
+								output.Write(buffer, 5, bytesRead - 8);
+
+								bool eof = bytesRead < buffer.Length;
+								while (!eof)
+								{
+									input.Position -= 3;
+									bytesRead = input.Read(buffer, 0, buffer.Length);
+									if (bytesRead == buffer.Length)
+									{
+										output.Write(buffer, 0, bytesRead - 3);
+									}
+									else
+									{
+										output.Write(buffer, 0, bytesRead-3);
+										eof = true;
+									}
+								}
+
+								//buffer[bytesRead - 1] = 13; //carriage return
+								buffer[bytesRead - 2] = 10; //line feed
+								buffer[bytesRead- 3] = 44; //comma
+								output.Write(buffer, bytesRead-3, 2);
+							}
+						}
+						output.Position = output.Length-2;
+						output.WriteByte(93);
+					}
+					MessageBox.Show("Sucessful Combination!");
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Error combining files!" + ex);
+				}
+			}
+		}
+
+		private void recursiveDirSearch(string startFilePath, LinkedList<string> dialogFilePaths)
+		{
+			try
+			{
+				string[] recursiveDirectories = Directory.GetDirectories(startFilePath);
+				foreach (string filePath in recursiveDirectories)
+				{
+					foreach (string f in Directory.GetFiles(filePath, "*.json"))
+					{
+						if (f.EndsWith(".json"))
+							dialogFilePaths.AddLast(f);
+					}
+					recursiveDirSearch(filePath, dialogFilePaths);
+				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
 	}
 }
+
